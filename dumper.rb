@@ -31,12 +31,22 @@ module SQLMonkey
   
   def harvest(model, baton)
     bananas = []
+    c = model.connection
     if baton[:add_deletes]
-      bananas << "DELETE FROM #{model.class.quoted_table_name} WHERE #{model.connection.quote_column_name(model.class.primary_key)} = #{model.quoted_id}"
+      bananas << "DELETE FROM #{model.class.quoted_table_name} WHERE #{c.quote_column_name(model.class.primary_key)} = #{model.quoted_id}"
     end
+    
+    quoted_columns = []
+    quoted_values = []
+    attributes_with_values = model.send(:arel_attributes_values,true, true)
+    attributes_with_values.each_pair do |key,value|  
+      quoted_columns << c.quote_column_name(key.name)
+      quoted_values << c.quote(value)
+    end
+
     bananas << "INSERT INTO #{model.class.quoted_table_name} " +
-      "(#{model.send(:quoted_column_names).join(', ')}) "  +
-      "VALUES(#{model.send(:attributes_with_quotes).values.join(', ')})"
+      "(#{quoted_columns.join(', ')}) "  +
+      "VALUES(#{quoted_values.join(', ')})"
     bananas
   end
   

@@ -7,3 +7,7 @@ After installation, each AR model has to_sql method that can take following opti
   :ignore_tables - do not dump specified tables (default: empty)
   :debug - debugging mode (default: false)
   :add_deletes - generate SQL to delete records with the same ID from DB before generating insert statement (default: false)
+
+Changelog
+-----------------
+10/08/2011 - gsusmonzon . changed 'harvest' method to work on Rails 3
